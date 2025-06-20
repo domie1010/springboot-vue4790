@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.SusheDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.sushe_name as susheName
+        ,a.sushe_uuid_number as susheUuidNumber
+        ,a.sushe_photo as sushePhoto
+        ,a.sushe_address as susheAddress
+        ,a.louceng_types as loucengTypes
+        ,a.danyuan_types as danyuanTypes
+        ,a.sushe_types as susheTypes
+        ,a.sushe_clicknum as susheClicknum
+        ,a.sushe_content as susheContent
+        ,a.sushe_delete as susheDelete
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.SusheView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+
+        FROM sushe  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.susheName != '' and params.susheName != null and params.susheName != 'null' ">
+                and a.sushe_name like CONCAT('%',#{params.susheName},'%')
+            </if>
+            <if test=" params.susheUuidNumber != '' and params.susheUuidNumber != null and params.susheUuidNumber != 'null' ">
+                and a.sushe_uuid_number like CONCAT('%',#{params.susheUuidNumber},'%')
+            </if>
+            <if test=" params.susheAddress != '' and params.susheAddress != null and params.susheAddress != 'null' ">
+                and a.sushe_address like CONCAT('%',#{params.susheAddress},'%')
+            </if>
+            <if test="params.loucengTypes != null and params.loucengTypes != ''">
+                and a.louceng_types = #{params.loucengTypes}
+            </if>
+            <if test="params.danyuanTypes != null and params.danyuanTypes != ''">
+                and a.danyuan_types = #{params.danyuanTypes}
+            </if>
+            <if test="params.susheTypes != null and params.susheTypes != ''">
+                and a.sushe_types = #{params.susheTypes}
+            </if>
+            <if test="params.susheClicknumStart != null and params.susheClicknumStart != ''">
+                <![CDATA[  and a.sushe_clicknum >= #{params.susheClicknumStart}   ]]>
+            </if>
+            <if test="params.susheClicknumEnd != null and params.susheClicknumEnd != ''">
+                <![CDATA[  and a.sushe_clicknum <= #{params.susheClicknumEnd}   ]]>
+            </if>
+             <if test="params.susheClicknum != null and params.susheClicknum != ''">
+                and a.sushe_clicknum = #{params.susheClicknum}
+             </if>
+            <if test=" params.susheContent != '' and params.susheContent != null and params.susheContent != 'null' ">
+                and a.sushe_content like CONCAT('%',#{params.susheContent},'%')
+            </if>
+            <if test="params.susheDeleteStart != null and params.susheDeleteStart != ''">
+                <![CDATA[  and a.sushe_delete >= #{params.susheDeleteStart}   ]]>
+            </if>
+            <if test="params.susheDeleteEnd != null and params.susheDeleteEnd != ''">
+                <![CDATA[  and a.sushe_delete <= #{params.susheDeleteEnd}   ]]>
+            </if>
+             <if test="params.susheDelete != null and params.susheDelete != ''">
+                and a.sushe_delete = #{params.susheDelete}
+             </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>
